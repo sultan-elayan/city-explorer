@@ -53,6 +53,6 @@ Estimate of time needed to complete: 4 hours
 
 Start time: 3 PM
 
-Finish time: 
+Finish time: 7 Pm and not finish
 
 Actual time needed to complete: _____
