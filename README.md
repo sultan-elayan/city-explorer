@@ -47,12 +47,24 @@
 <hr>
 
 
-Name of feature: Asynchronous code, and APIs
+Name of feature: Asynchronous code, and APIs (part1)
 
 Estimate of time needed to complete: 4 hours 
 
 Start time: 3 PM
 
-Finish time: 7 Pm and not finish
+Finish time: 7 Pm
 
-Actual time needed to complete: _____
+Actual time needed to complete: 4 hours
+
+<!-- ========================================================== -->
+
+Name of feature: Asynchronous code, and APIs (part2)
+
+Estimate of time needed to complete: 1 hours 
+
+Start time: 3 PM
+
+Finish time: 4 Pm
+
+Actual time needed to complete: 1 hours
