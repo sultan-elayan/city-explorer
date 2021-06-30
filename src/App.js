@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-
 import Alert from 'react-bootstrap/Alert'
+import Weather from './components/Weather';
+import Movies from './components/Movies';
 
 
 
@@ -14,31 +15,50 @@ export class App extends Component {
     super(props);
     this.state = {
       displayName: '',
-      longitude: '',
       latitude: '',
-      display: false,
-      error: "",
-      alert: false
+      longitude: '',
+      weatherData: [],
+      show: false,
+      error: '',
+      moviesData: [],
     }
   }
 
-  nameChangeHandler = (e) => {
-    this.setState({
-      displayName: e.target.value
-    })
-  }
+  nameChangeHandler = (e) => { this.setState({ displayName: e.target.value }) };
+
   submitData = async (e) => {
     e.preventDefault()
 
     try {
 
+
+      let axiResponse = await axios.get(`https://eu1.locationiq.com/v1/search.php?key=pk.54c5bcb87e24270823ee985ff91c6f9c&city=${this.state.displayName}&format=json`);
+
+      let lat = axiResponse.data[0].lat;
+      let lon = axiResponse.data[0].lon;
+      let KeyLocal = process.env.REACT_APP_BACKEND_URL
+
+      // =========================================================
+
+      let axiosWeatherResponse = await axios.get(`${KeyLocal}/weather?lat=${lat}&lon=${lon}&city=${this.state.displayName}`)
+
+      // =========================================================
+      let axiosMoviesResponse = await axios.get(`${KeyLocal}/movies?city=${this.state.displayName}`)
+
+      // =========================================================
+
       let axiosResponse = await axios.get(`https://eu1.locationiq.com/v1/search.php?key=pk.3bda2d41fe8feadb05c61e7ffe7be774&q=${this.state.displayName}&format=json`)
+      
       this.setState({
         displayName: axiosResponse.data[0].display_name,
         longitude: axiosResponse.data[0].lon,
         latitude: axiosResponse.data[0].lat,
         display: true,
-        alert: false
+        alert: false ,
+        weatherData: axiosWeatherResponse.data,
+        show :!this.state.show,
+        error:'',
+        moviesData:axiosMoviesResponse.data
       })
 
     } catch (error) {
@@ -59,27 +79,39 @@ export class App extends Component {
           {this.state.alert &&
             <Alert variant={'danger'}>
               Error: 'Wrong Input! Enter City Name'
-
             </Alert>
           }
         </div>
-        <div id="image">
 
+        <div id="image">
           <form onSubmit={this.submitData}>
             <h1>City Explorer</h1>
             <input type='text' placeholder="Enter Your City Name" onChange={(e) => { this.nameChangeHandler(e) }} required />
             <br />
             <br />
-            <button>Search</button>
+            <button>Explore!</button>
           </form>
-      
-            <img src={`https://maps.locationiq.com/v3/staticmap?key=pk.3bda2d41fe8feadb05c61e7ffe7be774&center=${this.state.latitude},${this.state.longitude}&zoom=10`} alt="sasa" />
-    
+
+          <img src={`https://maps.locationiq.com/v3/staticmap?key=pk.3bda2d41fe8feadb05c61e7ffe7be774&center=${this.state.latitude},${this.state.longitude}&zoom=10`} alt="sasa" />
+
           <h2>{this.state.displayName}</h2>
           <h2>{this.state.longitude}</h2>
           <h2>{this.state.latitude}</h2>
         </div>
 
+
+
+        {this.state.weatherData.map(value => {
+          return <Weather desc={value.description} date={value.date} />
+        })
+        }{
+          this.state.moviesData.map(value => {
+            return <Movies average_votes={value.average_votes} image_url={value.image_url}
+              popularity={value.popularity} released_on={value.released_on} total_votes={value.total_votes} />
+          })}
+        {
+          <p>{this.state.error}</p>
+        }
 
       </>
 
