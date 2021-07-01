@@ -5,7 +5,8 @@ import './App.css';
 import Alert from 'react-bootstrap/Alert'
 import Weather from './components/Weather';
 import Movies from './components/Movies';
-
+ 
+let KeyLocal = process.env.KEY_LOCAL
 
 
 
@@ -30,17 +31,28 @@ export class App extends Component {
     e.preventDefault()
 
     try {
-
-
       let axiResponse = await axios.get(`https://eu1.locationiq.com/v1/search.php?key=pk.54c5bcb87e24270823ee985ff91c6f9c&city=${this.state.displayName}&format=json`);
+      // console.log('axiosResponse', axiResponse);
 
       let lat = axiResponse.data[0].lat;
       let lon = axiResponse.data[0].lon;
       let KeyLocal = process.env.REACT_APP_BACKEND_URL
 
+      console.log("2");
+
+      this.setState({
+        displayName: axiosResponse.data[0].display_name,
+        longitude: axiosResponse.data[0].lon,
+        latitude: axiosResponse.data[0].lat,
+
+      })
+
       // =========================================================
 
-      let axiosWeatherResponse = await axios.get(`${KeyLocal}/weather?lat=${lat}&lon=${lon}&city=${this.state.displayName}`)
+      let axiosWeatherResponse = await axios.get(`${KeyLocal}/weather?lat=${this.state.latitude}&lon=${this.state.longitude}&city=${this.state.displayName}`)
+
+      console.log("3");
+      console.log('axiosResponse', axiosWeatherResponse);
 
       // =========================================================
       let axiosMoviesResponse = await axios.get(`${KeyLocal}/movies?city=${this.state.displayName}`)
@@ -48,18 +60,24 @@ export class App extends Component {
       // =========================================================
 
       let axiosResponse = await axios.get(`https://eu1.locationiq.com/v1/search.php?key=pk.3bda2d41fe8feadb05c61e7ffe7be774&q=${this.state.displayName}&format=json`)
-      
+
+
+
       this.setState({
         displayName: axiosResponse.data[0].display_name,
         longitude: axiosResponse.data[0].lon,
         latitude: axiosResponse.data[0].lat,
         display: true,
-        alert: false ,
+        alert: false,
         weatherData: axiosWeatherResponse.data,
-        show :!this.state.show,
-        error:'',
-        moviesData:axiosMoviesResponse.data
+        show: !this.state.show,
+        error: '',
+        moviesData: axiosMoviesResponse.data
       })
+
+
+     
+
 
     } catch (error) {
       this.setState({
